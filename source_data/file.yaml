@@ -1,0 +1,11 @@
+items:
+- milk
+- sugar
+- bread
+- salt
+items_price:
+  bread: 1ˆ
+  milk: 2ˆ
+  salt: 3ˆ
+  sugar: 5ˆ
+items_quantity: 4
