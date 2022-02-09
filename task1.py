@@ -15,6 +15,7 @@ os_type_list. В этой же функции создать главный сп
 import os
 import re
 import csv
+import chardet
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,10 +28,12 @@ def collect_data():
     for filename in source_files:
         filepath = os.path.join(data_dir, filename)
 
-        with open(filepath) as fl:
-            for line in fl.readlines():
-                result += re.findall(r'^(\w[^:]+).*:\s+([^:\n]+)\s*$', line)
-
+        file = open(filepath, 'rb').read()
+        coding_file = chardet.detect(file)['encoding']
+        file_utf8 = file.decode(coding_file).encode('utf-8').decode('utf-8')
+        file_data = file_utf8.split('\n')
+        for line in file_data:
+            result += re.findall(r'^(\w[^:]+).*:\s+([^:\n]+)\s*$', line)
     return result
 
 
@@ -54,7 +57,7 @@ def get_data():
 def write_to_csv(filepath):
     data = get_data()
     filepath = os.path.join(CURRENT_DIR, 'source_data', filepath)
-    with open(filepath, 'w', encoding='utf-8', newline='') as csv_file:
+    with open(filepath, 'w', newline='', encoding='utf-8') as csv_file:
         writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
         for line in data:
             writer.writerow(line)
