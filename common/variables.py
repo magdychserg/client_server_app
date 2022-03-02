@@ -24,3 +24,10 @@ ERROR = 'error'
 RESPONDEFAULT_IP_ADDRESS = 'respondefault_ip_address'
 MESSAGE = 'message'
 MESSAGE_TEXT = 'mess_text'
+RESPONSE_200 = {RESPONCE: 200}
+EXIT = 'exit'
+RESPONSE_400 = {
+    RESPONCE: 400,
+    ERROR: None}
+
+DESTINATION = 'to'
