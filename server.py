@@ -6,10 +6,12 @@ import logging
 import select
 import time
 import logs.config_server_log
+from descrptrs import Port
 from errors import IncorrectDataRecivedError
 from common.variables import *
 from common.utils import *
 from decos import log
+from metaclasses import ServerMaker
 
 # Инициализация логирования сервера.
 logger = logging.getLogger('server_dist')
@@ -28,7 +30,9 @@ def arg_parser():
 
 
 # Основной класс сервера
-class Server:
+class Server(metaclass=ServerMaker):
+    port = Port()
+
     def __init__(self, listen_address, listen_port):
         # Параметры подключения
         self.addr = listen_address
@@ -103,9 +107,7 @@ class Server:
                     del self.names[message[DESTINATION]]
             self.messages.clear()
 
-    # Функция адресной отправки сообщения определённому клиенту.
-    # Принимает словарь сообщение, список зарегистрированных
-    # пользователей и слушающие сокеты. Ничего не возвращает.
+
     def process_message(self, message, listen_socks):
         if message[DESTINATION] in self.names and \
                 self.names[message[DESTINATION]] in listen_socks:
@@ -120,15 +122,12 @@ class Server:
                 f'Пользователь {message[DESTINATION]} не зарегистрирован '
                 f'на сервере, отправка сообщения невозможна.')
 
-    # Обработчик сообщений от клиентов, принимает словарь - сообщение от клиента,
-    # проверяет корректность, отправляет словарь-ответ в случае необходимости.
     def process_client_message(self, message, client):
         logger.debug(f'Разбор сообщения от клиента : {message}')
-        # Если это сообщение о присутствии, принимаем и отвечаем
+
         if ACTION in message and message[ACTION] == PRESENCE \
                 and TIME in message and USER in message:
-            # Если такой пользователь ещё не зарегистрирован, регистрируем,
-            # иначе отправляем ответ и завершаем соединение.
+
             if message[USER][ACCOUNT_NAME] not in self.names.keys():
                 self.names[message[USER][ACCOUNT_NAME]] = client
                 send_message(client, RESPONSE_200)
@@ -165,11 +164,8 @@ class Server:
 
 
 def main():
-    # Загрузка параметров командной строки, если нет параметров,
-    # то задаём значения по умолчанию.
-    listen_address, listen_port = arg_parser()
 
-    # Создание экземпляра класса - сервера.
+    listen_address, listen_port = arg_parser()
     server = Server(listen_address, listen_port)
     server.main_loop()
 
