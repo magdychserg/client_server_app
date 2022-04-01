@@ -28,6 +28,7 @@ ERROR = 'error'
 MESSAGE = 'message'
 MESSAGE_TEXT = 'mess_text'
 EXIT = 'exit'
+SERVER_DATABASE = 'sqlite:///server_base.db3'
 
 # Словари - ответы:
 # 200
