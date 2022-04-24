@@ -1,11 +1,7 @@
-import sys
+
 import os
 import argparse
-import logging
 import configparser
-import logs.config_server_log
-
-from common.variables import *
 from common.utils import *
 from common.decos import log
 from server.core import MessageProcessor
